@@ -1,0 +1,6 @@
+option(
+    'enable-debug-log',
+    type: 'boolean',
+    value: false,
+    description: 'Enable verbose heartbeat debug logging to journalctl'
+)
