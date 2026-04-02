@@ -1,0 +1,35 @@
+{
+    // 1. 從左側檔案總管 (Explorer) 中隱藏這些檔案，讓畫面更乾淨
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/build/tmp*": true,           // 排除 Yocto build 產生的 tmp 資料夾
+        "**/build/sstate-cache": true,  // 排除快取
+        "**/build/downloads": true,     // 排除下載的原始碼包
+        "**/oe-*": true,                // 排除 oe-workdir, oe-logs 等
+        "**/recipe-sysroot*": true      // 排除 recipe-sysroot 與 recipe-sysroot-native
+    },
+
+    // 2. 從全域搜尋 (Ctrl+Shift+F) 中排除，這是 AI Assistant 與 Trace code 最關鍵的設定！
+    // 讓搜尋結果與 AI 讀取的 Context 不會被編譯出來的暫存檔污染
+    "search.exclude": {
+        "**/build/tmp*": true,
+        "**/build/sstate-cache": true,
+        "**/build/downloads": true,
+        "**/oe-*": true,
+        "**/recipe-sysroot*": true
+    },
+
+    // 3. 停止監聽這些資料夾的變化。
+    // Yocto 編譯時檔案變化極大，不排除的話 VS Code 的 CPU 使用率會飆高
+    "files.watcherExclude": {
+        "**/build/tmp*/**": true,
+        "**/build/sstate-cache/**": true,
+        "**/build/downloads/**": true,
+        "**/oe-*/**": true,
+        "**/recipe-sysroot*/**": true
+    }
+}
