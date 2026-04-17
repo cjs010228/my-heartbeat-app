@@ -48,6 +48,16 @@ int main() {
     sensorIface->register_property("MinValue", 0.0,
         sdbusplus::asio::PropertyPermission::readOnly);
 
+    // --- 新增：3. 建立自定義控制介面 (練習 Method Call 與 ReadWrite Property) ---
+    std::shared_ptr<sdbusplus::asio::dbus_interface> controlIface =
+        objectServer.add_interface(sensorPath, "xyz.openbmc_project.Control.Heartbeat");
+
+    controlIface->register_method("Reset", [&currentValue, sensorIface]() {
+        currentValue = 0.0;
+        sensorIface->set_property("Value", currentValue);
+        std::cout << "[DEBUG] Heartbeat reset to 0.0 via D-Bus Method 'Reset'!\n";
+    });
+
 // --- 新增：1. 憑空捏造一張名為 mock_chassis 的板子 ---
     std::shared_ptr<sdbusplus::asio::dbus_interface> chassisIface =
         objectServer.add_interface(boardPath, "xyz.openbmc_project.Inventory.Item.Board");
@@ -80,6 +90,7 @@ int main() {
     assocIface->initialize();
     operationalIface->initialize();
     availabilityIface->initialize();
+    controlIface->initialize();
 
     // 6. 設定每秒觸發一次的 Timer
     auto timer = std::make_shared<boost::asio::steady_timer>(io);
@@ -101,7 +112,7 @@ int main() {
             }
             
             // 加入 Debug 訊息以確認 Timer 確實有在執行
-            std::cout << "[DEBUG] Timer fired! Updating D-Bus Value to: " << currentValue << std::endl;
+            //std::cout << "[DEBUG] Timer fired! Updating D-Bus Value to: " << currentValue << std::endl;
 
             // 關鍵：呼叫 set_property 來更新 D-Bus 上的數值，並自動觸發 PropertiesChanged 訊號
             sensorIface->set_property("Value", currentValue);
